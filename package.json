@@ -1,0 +1,24 @@
+{
+  "name": "bugbrief-ai",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "extension",
+    "netlify-app",
+    "server"
+  ],
+  "scripts": {
+    "dev:extension": "npm --workspace extension run dev",
+    "dev:server": "npm --workspace server run dev",
+    "build": "npm --workspace extension run build && npm --workspace server run build",
+    "build:extension": "npm --workspace extension run build",
+    "build:server": "npm --workspace server run build",
+    "build:netlify": "npm --workspace @bugbrief-ai/server run build",
+    "deploy:netlify": "netlify deploy --build --filter @bugbrief-ai/netlify",
+    "deploy:netlify:prod": "netlify deploy --prod --build --filter @bugbrief-ai/netlify"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^5.2.2",
+    "netlify-cli": "^26.0.2"
+  }
+}

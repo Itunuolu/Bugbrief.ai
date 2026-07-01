@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.DS_Store
+*.log
+*.pid
+.netlify/
+deno.lock
+store-assets/demo-video-frames/
+store-assets/user-action-video-frames/

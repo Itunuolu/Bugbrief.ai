@@ -1,0 +1,83 @@
+# BugBrief AI Notes
+
+- Workspace started empty under `C:\Users\Admin\Documents\BugBrief Ai`.
+- MVP scope: Chrome Extension MV3 side panel + popup + service worker, React/TypeScript/Vite/Tailwind UI, Node/Express/TypeScript backend, Zod validation, mock mode when `AI_PROVIDER_API_KEY` is absent.
+- Extension should never contain an AI provider key. It sends context to the backend at `VITE_BUGBRIEF_API_URL` or the stored `bugbriefBackendUrl`, defaulting to `http://localhost:8787`.
+- Backend exposes `GET /health` and `POST /api/generate-bug-report`.
+- Report history is stored locally in `chrome.storage.local` under `bugbriefReportHistory`.
+- Verification run:
+  - `npm.cmd install` from the monorepo root completed successfully.
+  - `npm.cmd run build` completed for extension and server.
+  - Backend smoke test passed on a temporary port with mock mode enabled and returned Markdown.
+  - Browser smoke check passed for Vite-served `sidepanel.html` and `popup.html`.
+  - `npm.cmd audit --omit=dev` reported zero production dependency vulnerabilities.
+- Follow-up fix:
+  - Localhost/Vite preview now falls back when Chrome extension APIs are not available.
+  - Popup opens `/sidepanel.html` directly in preview mode.
+  - Side panel capture uses a generated PNG preview context in preview mode while keeping real `chrome.tabs.captureVisibleTab` for the loaded extension.
+- Capture permission fix:
+  - Added `<all_urls>` host permission because Chrome can drop the temporary `activeTab` grant before the side panel capture button runs.
+- Runtime fix:
+  - Started the backend on `http://localhost:8787` from `server/dist/index.js`.
+  - Health and generate endpoint smoke tests passed in mock mode.
+- Chrome Store readiness:
+  - Added manifest icon references and generated PNG icons in `extension/public/icons`.
+  - Added short in-app disclosure near Capture Bug for screenshot/page-detail backend submission.
+  - Added `PRIVACY.md` draft and `extension/.env.example`.
+  - Production builds now require `VITE_BUGBRIEF_API_URL`; dev fallback remains `http://localhost:8787`.
+  - Removed stale `bugbrief-ai-chrome-store.zip` until a real hosted backend URL is available.
+- Netlify deployment:
+  - Added `netlify-app` workspace containing `netlify.toml`, a Netlify Function API, and a static privacy page.
+  - `GET /health` and `POST /api/generate-bug-report` are available through Netlify redirects.
+  - Verified `npx netlify build --offline --filter @bugbrief-ai/netlify`.
+  - Verified Netlify Dev locally with `/health` and `/api/generate-bug-report` in mock mode.
+  - Actual hosted deploy still requires a Netlify login/token or linked site.
+  - Target Netlify site URL requested by user: `https://bugbrief.netlify.app`.
+  - Exact `bugbrief.netlify.app` subdomain was already occupied, so Netlify initially created `https://bugbrief-754.netlify.app`.
+  - Production deploy completed at the initial Netlify URL.
+  - Live `/health` and `/api/generate-bug-report` smoke tests passed in mock mode.
+  - Extension rebuilt with the initial Netlify URL.
+  - Fresh `bugbrief-ai-chrome-store.zip` created from `extension/dist`.
+  - Renamed Netlify project to `bugbrief-ai`; canonical URL is now `https://bugbrief-ai.netlify.app`.
+  - Redeployed and rebuilt Chrome Store ZIP against `https://bugbrief-ai.netlify.app`.
+- OpenRouter production AI config:
+  - Netlify production environment now has `AI_PROVIDER_API_KEY`, `AI_PROVIDER_BASE_URL`, `AI_PROVIDER_MODEL`, `OPENROUTER_SITE_URL`, and `OPENROUTER_APP_TITLE` configured.
+  - Live `/health` reports `mockMode: false`, confirming the deployed function sees an AI provider key.
+  - Live `/api/generate-bug-report` reaches OpenRouter, but OpenRouter currently returns HTTP 402 because the provider account has insufficient credits.
+  - Next step: add OpenRouter credits or switch to a model/account with available quota, then retry the end-to-end flow.
+- Gemini production AI config:
+  - Switched Netlify production environment to Google AI Studio / Gemini through the OpenAI-compatible endpoint.
+  - `AI_PROVIDER_BASE_URL` is `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`.
+  - `AI_PROVIDER_MODEL` is `gemini-2.5-flash`.
+  - `AI_PROVIDER_API_KEY` is stored as a Netlify secret and should not be committed or embedded in the extension.
+  - Redeployed `https://bugbrief-ai.netlify.app`; live `/health` reports `mockMode: false`.
+  - Live `/api/generate-bug-report` smoke test succeeded with HTTP 200 and returned a structured bug report.
+- Chrome Web Store assets:
+  - Created a 440x280 small promo image at `store-assets/chrome-web-store-promo-440x280.png`.
+  - Created simulated 1280x800 store screenshots:
+    - `store-assets/screenshot-01-capture-context-1280x800.png`
+    - `store-assets/screenshot-02-generated-report-1280x800.png`
+    - `store-assets/screenshot-03-local-history-1280x800.png`
+  - Screenshot storyboard source is `store-assets/demo-screenshots.html`.
+  - Removed broad `<all_urls>` host permission from the extension manifest to avoid the Chrome Web Store broad-host review warning.
+  - Bumped extension manifest version to `0.1.1` for the replacement Chrome Web Store upload.
+  - Rebuilt `extension/dist` and regenerated `bugbrief-ai-chrome-store.zip`; the ZIP manifest has no `host_permissions`.
+  - Created a 20-second silent MP4 product walkthrough at `store-assets/bugbrief-ai-demo-walkthrough-20s.mp4`.
+  - Video generation script is `store-assets/create-demo-video.ps1`; it uses the store screenshots and a static FFmpeg binary resolved through `ffmpeg-static`.
+  - Created a 30-second silent user-action walkthrough at `store-assets/bugbrief-ai-user-action-walkthrough.mp4`.
+  - User-action video script is `store-assets/create-user-action-walkthrough-video.ps1`; it shows pinning the extension, opening it, capturing the bug, filling notes, generating, copying/downloading, and local save.
+- Chrome Web Store rejection follow-up:
+  - Review rejection said current-tab capture was not reproducible because the submitted build required host permissions for `chrome.tabs.captureVisibleTab`.
+  - Source manifest now includes `host_permissions: ["<all_urls>"]` and manifest version is bumped to `0.1.3`.
+  - Rebuilt extension with `VITE_BUGBRIEF_API_URL=https://bugbrief-ai.netlify.app`.
+  - Regenerated `bugbrief-ai-chrome-store.zip`; verified the ZIP manifest contains version `0.1.3` and `<all_urls>` host permission.
+  - Live Netlify `/health` and `/api/generate-bug-report` smoke tests passed after rebuilding.
+- PDF report export update:
+  - Removed the extension-side Copy Markdown and Download `.md` flow.
+  - Added `jspdf` to the extension and created `extension/src/lib/pdf.ts` for local PDF generation.
+  - The generated PDF includes structured bug report sections and embeds the captured tab screenshot from `CapturedPageContext.screenshotDataUrl`.
+  - Updated the report view to show structured sections plus a single Download PDF action.
+  - Bumped Chrome extension manifest version to `0.1.4`.
+  - Rebuilt the extension with `VITE_BUGBRIEF_API_URL=https://bugbrief-ai.netlify.app` and regenerated `bugbrief-ai-chrome-store.zip`; verified the ZIP manifest is version `0.1.4`.
+  - Updated README testing instructions and refreshed Chrome Web Store screenshots/videos so assets refer to PDF instead of Markdown export.
+  - `npm.cmd --workspace extension audit --omit=dev` reports zero vulnerabilities.

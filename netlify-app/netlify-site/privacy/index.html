@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BugBrief AI Privacy Policy</title>
+    <style>
+      body {
+        margin: 0;
+        background: #f8fafc;
+        color: #172033;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.6;
+      }
+
+      main {
+        width: min(860px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 48px 0;
+      }
+
+      section {
+        margin-top: 28px;
+      }
+
+      h1,
+      h2 {
+        line-height: 1.2;
+      }
+
+      a {
+        color: #0f766e;
+      }
+
+      code {
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: #e2e8f0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p>BugBrief AI</p>
+      <h1>Privacy Policy</h1>
+      <p>Last updated: May 22, 2026</p>
+
+      <section>
+        <h2>Information We Collect</h2>
+        <p>
+          When a user clicks Capture Bug and generates a report, BugBrief AI may
+          collect a screenshot of the visible active tab, the page URL, page
+          title, timestamp, browser details, user-written notes, and generated
+          bug report content.
+        </p>
+        <p>
+          BugBrief AI does not collect this information in the background.
+          Capture starts only after the user presses Capture Bug.
+        </p>
+      </section>
+
+      <section>
+        <h2>How We Use Information</h2>
+        <p>
+          We use the captured screenshot, page details, and user notes only to
+          generate a structured bug report for the user. The Chrome extension
+          sends report-generation requests to the configured BugBrief backend.
+          The backend may send request content to an AI provider to produce the
+          bug report.
+        </p>
+      </section>
+
+      <section>
+        <h2>Local Storage</h2>
+        <p>
+          Generated reports are saved locally in the user's browser with
+          <code>chrome.storage.local</code> so the user can view recent report
+          history.
+        </p>
+      </section>
+
+      <section>
+        <h2>Data Sharing</h2>
+        <p>
+          BugBrief AI shares submitted report-generation data only as needed to
+          provide or improve the report-generation feature, including processing
+          by the BugBrief backend and the configured AI provider. We do not sell
+          user data, and we do not use screenshots, browsing activity, page
+          content, or notes for advertising or retargeting.
+        </p>
+      </section>
+
+      <section>
+        <h2>Human Access</h2>
+        <p>
+          Humans are not intended to read user-submitted report content during
+          normal product operation. Limited access may occur only with user
+          consent for support, for security or abuse investigation, to comply
+          with law, or using aggregated/anonymized information for internal
+          operations.
+        </p>
+      </section>
+
+      <section>
+        <h2>Security</h2>
+        <p>
+          Production deployments should use HTTPS for all communication between
+          the Chrome extension, backend, and AI provider. Backend secrets,
+          including AI provider API keys, must remain server-side.
+        </p>
+      </section>
+
+      <section>
+        <h2>User Controls</h2>
+        <p>
+          Users control when capture occurs by pressing Capture Bug. Users can
+          remove locally stored history by removing the extension or clearing
+          extension data in Chrome.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          For privacy questions, use the support contact listed on the
+          BugBrief AI Chrome Web Store listing.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

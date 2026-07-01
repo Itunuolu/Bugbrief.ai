@@ -1,0 +1,8 @@
+{
+  "name": "@bugbrief-ai/netlify",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix .. --workspace @bugbrief-ai/server run build"
+  }
+}
